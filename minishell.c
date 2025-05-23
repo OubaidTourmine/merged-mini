@@ -20,11 +20,7 @@ void	get_input(t_data *data)
 	return ;
 	report_redirect_errors(data);
 	parse_commands(data);
-	// print_command_list(data->commands);
-	int i = 0;
-	while(data->commands->args[i])
-		printf("%s\n", data->commands->args[i++]);
-	i = 0;
+	
 }
 
 int	main(int ac, char **av, char **env)
@@ -37,7 +33,7 @@ int	main(int ac, char **av, char **env)
 	while (1)
 	{
 		get_input(&data);
-		execution_pars(env);
+		execution_pars(env, &data);
 		free_memory(&data);
 	}
 }

@@ -6,11 +6,11 @@
 /*   By: outourmi <outourmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 15:58:22 by outourmi          #+#    #+#             */
-/*   Updated: 2025/05/22 21:14:02 by outourmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 17:12:50 by outourmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini.h"
+#include "minishell.h"
 
 
 void	ft_swap(char **export, int i, int j)
@@ -64,23 +64,23 @@ void	sort(char **export)
 	}
 }
 
-int	xdeclare(t_inf *inf)
+int	xdeclare(t_data *data)
 {
 	int		i;
 	char	*temp;
 
 	i = 0;
-	while (inf->export[i])
+	while (data->export[i])
 	{
-		temp = inf->export[i];
-		inf->export[i] = ft_strjoin_ft("declare -x ", inf->export[i]);
+		temp = data->export[i];
+		data->export[i] = ft_strjoin_ft("declare -x ", data->export[i]);
 		free(temp);
 		i++;
 	}
 	return (0);
 }
 
-int	quote(t_inf *inf)
+int	quote(t_data *data)
 {
 	int		i;
 	int		j;
@@ -91,46 +91,46 @@ int	quote(t_inf *inf)
 
 	i = 0;
 	j = 0;
-	while (inf->export[i])
+	while (data->export[i])
 	{
 		j = 0;
-		while (inf->export[i][j] && inf->export[i][j] != '=')
+		while (data->export[i][j] && data->export[i][j] != '=')
 			j++;
-		if (inf->export[i][j] == '=')
+		if (data->export[i][j] == '=')
 		{
-			temp = ft_substr_ft(inf->export[i], 0, j + 1);
-			value = ft_strjoin_ft("\"", &inf->export[i][j + 1]);
+			temp = ft_substr_ft(data->export[i], 0, j + 1);
+			value = ft_strjoin_ft("\"", &data->export[i][j + 1]);
 			quoted_value = ft_strjoin_ft(value, "\"");
 			new_var = ft_strjoin_ft(temp, quoted_value);
 			free(value);
 			free(temp);
 			free(quoted_value);
-			free(inf->export[i]);
-			inf->export[i] = new_var;
+			free(data->export[i]);
+			data->export[i] = new_var;
 		}
 		i++;
 	}
 	return (0);
 }
 
-int	get_export(t_inf *inf)
+int	get_export(t_data *data)
 {
 	int i;
 
 	i = 0;
-	while (inf->env[i])
+	while (data->env[i])
 		i++;
-	inf->export = malloc(sizeof(char *) * (i + 1));
+	data->export = malloc(sizeof(char *) * (i + 1));
 	i = 0;
-	while (inf->env[i])
+	while (data->env[i])
 	{
-		inf->export[i] = ft_strdup_ft(inf->env[i]);
+		data->export[i] = ft_strdup_ft(data->env[i]);
 		i++;
 	}
-	inf->export[i] = NULL;
+	data->export[i] = NULL;
 	i = 0;
-	sort(inf->export);
-	xdeclare(inf);
-	quote(inf);
+	sort(data->export);
+	xdeclare(data);
+	quote(data);
 	return (0);
 }

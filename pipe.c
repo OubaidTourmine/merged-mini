@@ -6,10 +6,10 @@
 /*   By: outourmi <outourmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 18:36:17 by outourmi          #+#    #+#             */
-/*   Updated: 2025/05/22 21:13:50 by outourmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 17:40:24 by outourmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini.h"
+#include "minishell.h"
 
 

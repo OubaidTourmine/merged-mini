@@ -6,11 +6,11 @@
 /*   By: outourmi <outourmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 16:12:44 by outourmi          #+#    #+#             */
-/*   Updated: 2025/05/22 21:13:40 by outourmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 17:40:31 by outourmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini.h"
+#include "minishell.h"
 
 size_t	ft_strlen_ft(char *s)
 {

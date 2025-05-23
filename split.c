@@ -6,14 +6,14 @@
 /*   By: outourmi <outourmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:40:01 by outourmi          #+#    #+#             */
-/*   Updated: 2025/05/22 21:13:45 by outourmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 17:40:14 by outourmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini.h"
+#include "minishell.h"
 
 
-static void	ft_free(char **ptr)
+static void	ft_freee(char **ptr)
 {
 	int	i;
 
@@ -86,7 +86,7 @@ static char	**splitting(char const *s, char c, char **array)
 			array[i] = ft_dup(s + j, c);
 			if (array[i] == NULL)
 			{
-				ft_free(array);
+				ft_freee(array);
 				return (NULL);
 			}
 			i++;

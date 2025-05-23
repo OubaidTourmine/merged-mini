@@ -7,9 +7,12 @@
 # include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
+# include <sys/types.h>
 # include <unistd.h>
-# include "mini.h"
+
 
 typedef enum e_type
 {
@@ -62,6 +65,8 @@ typedef struct s_data
 	t_token				*tokens;
 	t_token				*last_token;
 	t_command			*commands;
+	char				**env;
+	char				**export;
 	int					*line_pos;
 	int					exit_status;
 	int					is_delimiter;
@@ -70,7 +75,7 @@ typedef struct s_data
 }						t_data;
 
 void					setup_signals(void);
-int	execution_pars(char **env);
+int	execution_pars(char **env, t_data *data);
 void					ft_putstr_fd(char *s, int fd);
 char					*ft_strdup(const char *s1, t_data *data);
 char					*ft_strdup(const char *s1, t_data *data);
@@ -143,5 +148,35 @@ void					skip_to_next_command(t_token **token);
 
 void	print_command_list(t_command *commands);// i need to remove this later
 void    print_tokens(t_token *tokens);// also this...
+
+
+/* oubaid */
+typedef struct s_inf
+{
+	char	**env;
+	char	**export;
+	char	*command;
+	char	*arg;
+	char	*flag;
+	char 	*pipe;
+	char	less;
+	char	great;
+}			t_inf;
+
+
+int execution(t_data *data);
+char		**ft_split(char const *s, char c);
+int			ft_strcmp_ft(char *s1, char *s2);
+int			ft_strncmp_ft(char *s1, char *s2, size_t n);
+int	get_export(t_data *data);
+size_t		ft_strlen_ft(char *s);
+char		*ft_strjoin_ft(char *s1, char *s2);
+char		*ft_strdup_ft(char *src);
+char		*ft_substr_ft(char *s, unsigned int start, size_t len);
+void		free_array(char **ptr);
+int	func_export(t_data *data);
+
+
+
 
 #endif

@@ -6,11 +6,11 @@
 /*   By: outourmi <outourmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 15:13:36 by outourmi          #+#    #+#             */
-/*   Updated: 2025/05/22 21:18:23 by outourmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 17:28:13 by outourmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini.h"
+#include "minishell.h"
 
 int	check_x_permession(mode_t mode)
 {
@@ -31,12 +31,12 @@ int	func_pwd(void)
 	return (0);
 }
 
-int	 func_cd(t_inf *inf)
+int	 func_cd(t_data *data)
 {
 	const char	*path;
 	struct stat	file_stat;
 
-	if (!inf->arg)
+	if (!data->commands->args)
 	{
 		path = getenv("HOME");
 		if (!path)
@@ -51,7 +51,7 @@ int	 func_cd(t_inf *inf)
 		}
 		return (0);
 	}
-	else if (!ft_strcmp_ft(inf->arg, "-"))
+	else if (!ft_strcmp_ft(data->commands->args[1], "-"))
 	{
 		path = getenv("OLDPWD");
 		if (!path)
@@ -68,7 +68,7 @@ int	 func_cd(t_inf *inf)
 	}
 	else
 	{
-		path = inf->arg;
+		path = data->commands->args[1];
 		if (!path)
 			return (1);
 		if (stat(path, &file_stat) == -1)
@@ -89,36 +89,36 @@ int	 func_cd(t_inf *inf)
 	return (1);
 }
 
-int	func_echo(t_inf *inf)
+int	func_echo(t_data *data)
 {
-	printf("%s\n", inf->arg);
+	printf("%s\n", data->commands->args[1]);
 	return (0);
 }
 
-int	func_env(t_inf *inf)
+int	func_env(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	while (inf->env[i])
+	while (data->env[i])
 	{
-		// if (!inf->env[i  +1])
+		// if (!data->env[i  +1])
 		// {
 		//     break ;
 		// }
-		printf("%s\n", inf->env[i++]);
+		printf("%s\n", data->env[i++]);
 	}
 	return (0);
 }
 
-int	func_exit(t_inf *inf)
+int	func_exit(t_data *data)
 {
-	(void)inf;
-	if (inf->env)
-		free_array(inf->env);
-	if (inf->export)
-		free_array(inf->export);
-	free(inf);
+	(void)data;
+	if (data->env)
+		free_array(data->env);
+	if (data->export)
+		free_array(data->export);
+	free(data);
 	exit(0);
 }
 
@@ -138,36 +138,36 @@ size_t	ft_strlen_exp(char *s)
 	return (i);
 }
 
-int	func_unset(t_inf *inf)
+int	func_unset(t_data *data)
 {
 	int		i;
 	int		var_len;
-	int		len_arg;
+	int		len_args;
 	char	*var_name;
 	int		j;
 
 	i = 0;
-	len_arg = ft_strlen_ft(inf->arg);
-	while (inf->env[i])
+	len_args = ft_strlen_ft(data->commands->args[0]);
+	while (data->env[i])
 	{
-		var_name = inf->env[i];
+		var_name = data->env[i];
 		var_len = ft_strlen_exp(var_name);
-		if (strncmp(var_name, inf->arg, len_arg) == 0 && var_len == len_arg)
+		if (strncmp(var_name, data->commands->args[1], len_args) == 0 && var_len == len_args)
 		{
 			// Free both arrays' entries at this position
-			free(inf->env[i]);
-			free(inf->export[i]);
+			free(data->env[i]);
+			free(data->export[i]);
 			// Shift all subsequent elements
 			j = i;
-			while (inf->env[j + 1])
+			while (data->env[j + 1])
 			{
-				inf->env[j] = inf->env[j + 1];
-				inf->export[j] = inf->export[j + 1];
+				data->env[j] = data->env[j + 1];
+				data->export[j] = data->export[j + 1];
 				j++;
 			}
 			// Null-terminate both arrays at the new end
-			inf->env[j] = NULL;
-			inf->export[j] = NULL;
+			data->env[j] = NULL;
+			data->export[j] = NULL;
 			return (0);
 		}
 		i++;
@@ -175,122 +175,97 @@ int	func_unset(t_inf *inf)
 	return (0);
 }
 
-int	func_export(t_inf *inf)
+int	func_export(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	get_export(inf);
-	if (!inf->arg)
+	get_export(data);
+	if (!data->commands->args[1])
 	{
-		while (inf->export[i + 1])
-			printf("%s\n", inf->export[i++]);
+		while (data->export[i + 1])
+			printf("%s\n", data->export[i++]);
 	}
 	else
 	{
-		while (inf->env[i])
+		while (data->env[i])
 			i++;
-		inf->env[i] = ft_strdup_ft(inf->arg);
-		// inf->env[i] = ft_strjoin_ft("declare -x ", inf->arg);
-		inf->env[i + 1] = NULL;
+		data->env[i] = ft_strdup_ft(data->commands->args[1]);
+		// data->env[i] = ft_strjoin_ft("declare -x ", data->commands->args);
+		data->env[i + 1] = NULL;
 		i = 0;
-		// while (inf->export[i])
+		// while (data->export[i])
 		// {
-		//     // if (!inf->export[i  + 2])
+		//     // if (!data->export[i  + 2])
 		//     // {
 		//     //     break ;
 		//     // }
-		//     // printf("%s\n", inf->export[i++]);
+		//     // printf("%s\n", data->export[i++]);
 		// }
 	}
 	return (0);
 }
 
-int	builtin(t_inf *inf)
+int	builtin(t_data *data)
 {
-	if (ft_strcmp_ft(inf->command, "echo") == 0)
-		func_echo(inf);
-	else if (ft_strcmp_ft(inf->command, "cd") == 0)
-		func_cd(inf);
-	else if (ft_strcmp_ft(inf->command, "pwd") == 0)
+	if (ft_strcmp_ft(data->commands->args[0], "echo") == 0)
+		func_echo(data);
+	else if (ft_strcmp_ft(data->commands->args[0], "cd") == 0)
+		func_cd(data);
+	else if (ft_strcmp_ft(data->commands->args[0], "pwd") == 0)
 		func_pwd();
-	else if (ft_strcmp_ft(inf->command, "env") == 0)
-		func_env(inf);
-	else if (ft_strcmp_ft(inf->command, "export") == 0)
-		func_export(inf);
-	else if (ft_strcmp_ft(inf->command, "unset") == 0)
-		func_unset(inf);
-	else if (ft_strcmp_ft(inf->command, "exit") == 0)
-		func_exit(inf);
+	else if (ft_strcmp_ft(data->commands->args[0], "env") == 0)
+		func_env(data);
+	else if (ft_strcmp_ft(data->commands->args[0], "export") == 0)
+		func_export(data);
+	else if (ft_strcmp_ft(data->commands->args[0], "unset") == 0)
+		func_unset(data);
+	else if (ft_strcmp_ft(data->commands->args[0], "exit") == 0)
+		func_exit(data);
 	return (0);
 }
 
-int	get_env(char **env, t_inf *inf)
+int	get_env(char **env, t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (env[i] != NULL)
 		i++;
-	inf->env = malloc((i) * sizeof(char *) + 8);
-	if (!inf->env)
+	data->env = malloc((i) * sizeof(char *) + 8);
+	if (!data->env)
 		return (1);
 	i = 0;
 	while (env[i] != NULL)
 	{
-		inf->env[i] = ft_strdup_ft(env[i]);
+		data->env[i] = ft_strdup_ft(env[i]);
 		i++;
 	}
-	inf->env[i] = NULL;
+	data->env[i] = NULL;
 	return (0);
 }
-int	execution_pars(char **env)
+int	execution_pars(char **env, t_data *data)
 {
-	t_inf	*inf;
-	char	*line;
-	char	*space;
-
-	inf = malloc(sizeof(t_inf));
-	get_env(env, inf);
-	get_export(inf);
-	while (1)
+	data->env = NULL;
+	data->export = NULL;
+	
+	get_env(env, data);
+	get_export(data);
+	
+	if (data->commands && data->commands->args && data->commands->args[0] && (
+		ft_strcmp_ft(data->commands->args[0], "echo") == 0 ||
+		ft_strcmp_ft(data->commands->args[0], "cd") == 0 ||
+		ft_strcmp_ft(data->commands->args[0], "pwd") == 0 ||
+		ft_strcmp_ft(data->commands->args[0], "env") == 0 ||
+		ft_strcmp_ft(data->commands->args[0], "export") == 0 ||
+		ft_strcmp_ft(data->commands->args[0], "unset") == 0 ||
+		ft_strcmp_ft(data->commands->args[0], "exit") == 0))
 	{
-		line = readline("minishell> ");
-		space = strchr(line, ' ');
-		if (!line)
-			break ;
-		if (!space)
-		{
-			inf->command = line;
-			inf->arg = NULL;
-		}
-		else
-		{
-			*space = '\0';
-			inf->command = line;
-			inf->arg = space + 1;
-		}
-		if (inf->command && (
-            ft_strcmp_ft(inf->command, "echo") == 0 ||
-            ft_strcmp_ft(inf->command, "cd") == 0 ||
-            ft_strcmp_ft(inf->command, "pwd") == 0 ||
-            ft_strcmp_ft(inf->command, "env") == 0 ||
-            ft_strcmp_ft(inf->command, "export") == 0 ||
-            ft_strcmp_ft(inf->command, "unset") == 0 ||
-            ft_strcmp_ft(inf->command, "exit") == 0))
-        {
-            builtin(inf);
-        }
-        else if (inf->command)
-        {
-            execution(inf);
-        }
-		free(line);
+		builtin(data);
 	}
-	if (inf->env)
-		free_array(inf->env);
-	if (inf->export)
-		free_array(inf->export);
-	free(inf);
+	else if (data->commands && data->commands->args && data->commands->args[0])
+	{
+		execution(data);
+	}
 	return (0);
 }
