@@ -9,10 +9,9 @@
 # include <stdlib.h>
 # include <string.h>
 # include <sys/stat.h>
-# include <sys/wait.h>
 # include <sys/types.h>
+# include <sys/wait.h>
 # include <unistd.h>
-
 
 typedef enum e_type
 {
@@ -71,11 +70,12 @@ typedef struct s_data
 	int					exit_status;
 	int					is_delimiter;
 	int					is_filename;
-	int 		found_syntax_error;
+	int					found_syntax_error;
 }						t_data;
 
+int						ft_pipe(t_data *data);
 void					setup_signals(void);
-int	execution_pars(char **env, t_data *data);
+int						execution_pars(t_data *data, char **env);
 void					ft_putstr_fd(char *s, int fd);
 char					*ft_strdup(const char *s1, t_data *data);
 char					*ft_strdup(const char *s1, t_data *data);
@@ -95,46 +95,37 @@ int						has_non_space_char(char *str);
 int						is_expandable(int c);
 int						ft_isspace(char c);
 void					skip_spaces(char *line, int *i);
-
 int						check_leading_pipe(char *line, int *i);
 int						check_syntax_errors(t_token *token);
 int						check_consecutive_operators(t_token *token);
-
 int						tokenize_input(char *line, t_data *data);
 t_token					*create_new_token(t_data *data, t_type type,
 							char *content);
 void					add_token_to_list(t_data *data, t_type type,
 							char *content);
 void					set_flags(t_data *data, int delimiter, int filename);
-
 char					*expand(char *line, int *i, t_data *data);
-
 void					append_to_last_token(t_data *data, char *str,
 							int quoted);
 void					check_lead_space(t_data *data, char *var_value);
 void					check_trail_space(t_data *data, char *var_value,
 							char *line, int *i);
-int 					is_amb_redirect(t_token *redirect);
+int						is_amb_redirect(t_token *redirect);
 void					handle_spaces_in_var(t_data *data, char *var_value,
 							int *j);
-
 void					handle_regular_word(t_data *data, char *line, int *i);
 void					handle_single_quotes(t_data *data, char *line, int *i);
 void					handle_double_quotes(t_data *data, char *line, int *i);
 void					handle_var_expansion(t_data *data, char *line, int *i);
-
 void					parse_commands(t_data *data);
-
 void					track_ptr(void *ptr, t_data *data);
 void					free_memory(t_data *data);
 void					ft_free(void *ptr, t_data *data);
 void					*ft_malloc(size_t size, t_data *data);
-
 int						is_redirection(t_type type);
 void					add_command_to_list(t_data *data,
 							t_command *new_command);
 int						count_args(t_token *current);
-
 int						process_heredocs(t_data *data);
 char					*generate_heredoc_filepath(t_data *data);
 void					print_heredoc_warning(char *delimiter);
@@ -142,41 +133,37 @@ int						check_hd_exit_status(t_data *data, int status);
 int						handle_heredoc(t_data *data, t_token *heredoc);
 char					*process_hd_line(t_data *data, t_token *hd, char *line,
 							char *content);
-void	mark_amb(t_data *data, char *line, int start_i, t_token *amb_redirect);
+void					mark_amb(t_data *data, char *line, int start_i,
+							t_token *amb_redirect);
 void					report_redirect_errors(t_data *data);
 void					skip_to_next_command(t_token **token);
-
-void	print_command_list(t_command *commands);// i need to remove this later
-void    print_tokens(t_token *tokens);// also this...
-
+void	print_command_list(t_command *commands); // i need to remove this later
+void	print_tokens(t_token *tokens);           // also this...
 
 /* oubaid */
 typedef struct s_inf
 {
-	char	**env;
-	char	**export;
-	char	*command;
-	char	*arg;
-	char	*flag;
-	char 	*pipe;
-	char	less;
-	char	great;
-}			t_inf;
+	char				**env;
+	char				**export;
+	char				*command;
+	char				*arg;
+	char				*flag;
+	char				*pipe;
+	char				less;
+	char				great;
+}						t_inf;
 
-
-int execution(t_data *data);
-char		**ft_split(char const *s, char c);
-int			ft_strcmp_ft(char *s1, char *s2);
-int			ft_strncmp_ft(char *s1, char *s2, size_t n);
-int	get_export(t_data *data);
-size_t		ft_strlen_ft(char *s);
-char		*ft_strjoin_ft(char *s1, char *s2);
-char		*ft_strdup_ft(char *src);
-char		*ft_substr_ft(char *s, unsigned int start, size_t len);
-void		free_array(char **ptr);
-int	func_export(t_data *data);
-
-
-
+int	get_env(char **env, t_data *data);
+int						execution(t_data *data, int flag);
+char					**ft_split(char const *s, char c);
+int						ft_strcmp_ft(char *s1, char *s2);
+int						ft_strncmp_ft(char *s1, char *s2, size_t n);
+int						get_export(t_data *data);
+size_t					ft_strlen_ft(char *s);
+char					*ft_strjoin_ft(char *s1, char *s2);
+char					*ft_strdup_ft(char *src);
+char					*ft_substr_ft(char *s, unsigned int start, size_t len);
+void					free_array(char **ptr);
+int						func_export(t_data *data);
 
 #endif

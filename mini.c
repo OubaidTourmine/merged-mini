@@ -6,7 +6,7 @@
 /*   By: outourmi <outourmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 15:13:36 by outourmi          #+#    #+#             */
-/*   Updated: 2025/05/23 17:28:13 by outourmi         ###   ########.fr       */
+/*   Updated: 2025/05/29 15:16:39 by outourmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	func_pwd(void)
 	return (0);
 }
 
-int	 func_cd(t_data *data)
+int	func_cd(t_data *data)
 {
 	const char	*path;
 	struct stat	file_stat;
@@ -152,7 +152,8 @@ int	func_unset(t_data *data)
 	{
 		var_name = data->env[i];
 		var_len = ft_strlen_exp(var_name);
-		if (strncmp(var_name, data->commands->args[1], len_args) == 0 && var_len == len_args)
+		if (strncmp(var_name, data->commands->args[1], len_args) == 0
+			&& var_len == len_args)
 		{
 			// Free both arrays' entries at this position
 			free(data->env[i]);
@@ -244,28 +245,25 @@ int	get_env(char **env, t_data *data)
 	data->env[i] = NULL;
 	return (0);
 }
-int	execution_pars(char **env, t_data *data)
+int	execution_pars(t_data *data, char **env)
 {
 	data->env = NULL;
 	data->export = NULL;
-	
+
 	get_env(env, data);
 	get_export(data);
-	
-	if (data->commands && data->commands->args && data->commands->args[0] && (
-		ft_strcmp_ft(data->commands->args[0], "echo") == 0 ||
-		ft_strcmp_ft(data->commands->args[0], "cd") == 0 ||
-		ft_strcmp_ft(data->commands->args[0], "pwd") == 0 ||
-		ft_strcmp_ft(data->commands->args[0], "env") == 0 ||
-		ft_strcmp_ft(data->commands->args[0], "export") == 0 ||
-		ft_strcmp_ft(data->commands->args[0], "unset") == 0 ||
-		ft_strcmp_ft(data->commands->args[0], "exit") == 0))
+	if (data->commands && data->commands->args && data->commands->args[0] && !(data->commands->next)
+		&& (ft_strcmp_ft(data->commands->args[0], "echo") == 0
+			|| ft_strcmp_ft(data->commands->args[0], "cd") == 0
+			|| ft_strcmp_ft(data->commands->args[0], "pwd") == 0
+			|| ft_strcmp_ft(data->commands->args[0], "env") == 0
+			|| ft_strcmp_ft(data->commands->args[0], "export") == 0
+			|| ft_strcmp_ft(data->commands->args[0], "unset") == 0
+			|| ft_strcmp_ft(data->commands->args[0], "exit") == 0))
 	{
 		builtin(data);
 	}
 	else if (data->commands && data->commands->args && data->commands->args[0])
-	{
-		execution(data);
-	}
+		execution(data, 0);
 	return (0);
 }

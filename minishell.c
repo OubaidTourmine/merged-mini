@@ -25,15 +25,21 @@ void	get_input(t_data *data)
 
 int	main(int ac, char **av, char **env)
 {
-	t_data	data;
+	t_data data;
+
 	(void)ac;
 	(void)av;
 	setup_signals();
 	ft_memset(&data, 0, sizeof(t_data));
+	// data.env = NULL;
+	// data.export = NULL;
+
+	// get_env(env, &data);
+	// get_export(&data);
 	while (1)
 	{
 		get_input(&data);
-		execution_pars(env, &data);
+		execution_pars(&data, env);
 		free_memory(&data);
 	}
 }
